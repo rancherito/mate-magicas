@@ -40,23 +40,15 @@ const ThankYouMessage = styled.div`
 const CharacterSelection = () => {
     const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
     const router = useRouter();
-    
-
-    useEffect(() => {
-        const savedCharacter = localStorage.getItem('selectedCharacter');
-        if (savedCharacter) {
-            setSelectedCharacter(savedCharacter);
-        }
-    }, []);
 
     const handleCharacterSelection = (character: string) => {
         setSelectedCharacter(character);
         localStorage.setItem('selectedCharacter', character);
-        setTimeout(() => router.push('/game'), 1500); // Redirige después de 1.5 segundos
+        setTimeout(() => location.href = "/nombre-jugador", 500); // Redirige después de 1.5 segundos
     };
 
     return (
-        <div className="flex items-center px-10 flex-col">
+        <div className="flex items-center px-10 flex-col relative">
 
 
             <div className="text-center text-white">
@@ -65,18 +57,32 @@ const CharacterSelection = () => {
             </div>
 
             <div className="flex justify-between items-center px-10">
-                <CharacterContainer onClick={() => handleCharacterSelection('Pedro')}>
+                <CharacterContainer className={selectedCharacter == "Pedro" ? "select-character" : ""} onClick={() => handleCharacterSelection('Pedro')}>
                     <ThankYouMessage className="thank-you">Ayudar a Pedrito</ThankYouMessage>
                     <Image src="/pedro.png" alt="Pedro" width={300} height={300} />
                     <p className="text-center text-white text-2xl mt-4 font-bold">Pedro</p>
                 </CharacterContainer>
 
-                <CharacterContainer onClick={() => handleCharacterSelection('María')}>
+                <CharacterContainer className={selectedCharacter == "María" ? "select-character" : ""} onClick={() => handleCharacterSelection('María')}>
                     <ThankYouMessage className="thank-you">Ayudar a Marianita</ThankYouMessage>
                     <Image src="/maria.png" alt="María" width={300} height={300} />
                     <p className="text-center text-white text-2xl mt-4 font-bold">Mariana</p>
                 </CharacterContainer>
             </div>
+            {selectedCharacter != null && selectedCharacter != "" ? (
+                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-500 text-white font-bold py-4 px-8 rounded-lg shadow-lg">
+                    Gracias por ayudarme {selectedCharacter === "Pedro" ? "Aventurero" : selectedCharacter === "María" ? "Aventurera" : ""}
+                </div>
+            ) : (<span></span>)}
+
+            <style>
+                {`
+                    .select-character, .select-character:hover {
+                        transform: scale(1.4);
+                    }
+                `}
+            </style>
+
         </div>
     );
 };

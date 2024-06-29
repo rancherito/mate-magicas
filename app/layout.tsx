@@ -1,14 +1,11 @@
-import type { Metadata } from "next";
+"use client";
+import React, { useState, useEffect } from "react";
 import { Inter } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
 import { AnimatedParticles } from "@/components/AnimatedParticles";
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-    title: "Matemágicas",
-    description: "Un juego mágico de matemáticas para todas las mentes curiosas",
-};
 
 const MagicWand = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -22,12 +19,23 @@ const MathSymbol = () => (
     </svg>
 );
 
-
 export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const [character, setCharacter] = useState<string | null>(null);
+    const [playerName, setPlayerName] = useState<string | null>(null);
+
+    useEffect(() => {
+        const savedCharacter = localStorage.getItem('selectedCharacter');
+        const savedName = localStorage.getItem('playerName');
+        if (savedCharacter && savedName) {
+            setCharacter(savedCharacter);
+            setPlayerName(savedName);
+        }
+    }, []);
+
     return (
         <html lang="es">
             <body className={inter.className}>
@@ -50,14 +58,17 @@ export default function RootLayout({
                                 <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 mb-6">
                                     ¡Bienvenidos a la Aventura Matemágica!
                                 </h1>
-                                <p className="text-xl mb-8 text-yellow-200">
-                                    Donde cada mente curiosa descubre la magia de los números
-                                </p>
                                 <div className="flex-grow w-full flex justify-center items-center">
                                     {children}
                                 </div>
+                                {character && (
+                                    <div className="absolute bottom-4" style={{ left: '-200px', width: '400px' }}>
+                                        <img className="absolute bottom-4" style={{ width: '100%' }} src={character === 'Pedro' ? '/pedro.png' : '/maria.png'} />
+                                    </div>
+                                )}
                             </div>
                         </div>
+
                     </div>
                     <div className="absolute top-4 left-4 text-yellow-400 animate-bounce">
                         <MagicWand />
@@ -65,9 +76,7 @@ export default function RootLayout({
                     <div className="absolute top-4 right-4 text-yellow-400 animate-bounce">
                         <MathSymbol />
                     </div>
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm">
-                        © 2024 Matemágicas - Inspirando mentes jóvenes
-                    </div>
+
                 </div>
             </body>
         </html>
